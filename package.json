@@ -1,0 +1,17 @@
+{
+  "name": "event-emission",
+  "version": "0.1.0",
+  "description": "Prototype to try slot updates in web components",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "babel": "babel --presets es2015 js/main.js -o build/main.bundle.js",
+    "start": "http-server",
+    "webpack": "webpack",
+    "compile": "clear && npx webpack --config webpack.config.js"
+  },
+  "author": "Torsten Muller",
+  "license": "ISC",
+  "dependencies": {  },
+  "devDependencies": {  }
+}

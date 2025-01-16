@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Event Emission test</title>
+</head>
+<body>
+<h2>Replacing slot content</h2>
+
+<h3>With original as markup inside WebComponent tags</h3>
+<event-emission>
+  <section slot="content" id="emission-wc">
+    <p>This comes from the outside, yeah!</p>
+    <button onclick="replaceContent()">Replace this content from the outside!</button>
+  </section>
+</event-emission>
+
+<hr/>
+<h3>With all content set from outside WebComponent</h3>
+<event-emission  id="emission-wc2"></event-emission>
+<button onclick="populateSecond()">Populate</button>
+<button onclick="replaceSecond()">Replace</button>
+
+
+</body>
+<script type="application/javascript" src="./event-emission.js"></script>
+<script>
+  const replaceContent = () => {
+    const contentElement = document.getElementById("emission-wc");
+    contentElement.innerHTML = `<p>Changed the content now to something else without a button</p>`;
+  }
+
+  const populateSecond  = () => {
+    const contentElement = document.getElementById("emission-wc2");
+    contentElement.innerHTML = '<h2 slot="content">Original stuff from JS</h2>'
+  }
+
+  const replaceSecond  = () => {
+    const contentElement = document.getElementById("emission-wc2");
+    contentElement.innerHTML = '<h2 slot="headline">Let\'s change the headline as well</h2><p slot="content">Lorem ipsum mes indicatis substantiative</p>'
+  }
+</script>
+</html>
