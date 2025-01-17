@@ -19,7 +19,7 @@ class EventEmission extends HTMLElement {
     return rootElement;
   }
 
-  markup = '<div><h4><slot name="headline">Here is my element</slot></h4><div style="width:200px;height:200px;border:1px solid #777"><slot name="content"></slot></div><footer>Here is some footer</footer></div>'
+  markup = '<div style="background:#ddd"><h4><slot name="headline">Here is my element</slot></h4><div style="width:200px;height:200px;border:1px solid #777"><slot name="content"></slot></div><footer>Here is some footer</footer></div>'
 
 }
 

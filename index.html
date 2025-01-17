@@ -10,17 +10,21 @@
 <h3>With original as markup inside WebComponent tags</h3>
 <event-emission>
   <section slot="content" id="emission-wc">
-    <p>This comes from the outside, yeah!</p>
+    <p>This comes from the inside, yeah!</p>
     <button onclick="replaceContent()">Replace this content from the outside!</button>
   </section>
 </event-emission>
 
 <hr/>
 <h3>With all content set from outside WebComponent</h3>
-<event-emission  id="emission-wc2"></event-emission>
+<event-emission id="emission-wc2"></event-emission>
 <button onclick="populateSecond()">Populate</button>
 <button onclick="replaceSecond()">Replace</button>
 
+<hr/>
+
+<h3>Populate component from button inside slot</h3>
+<event-emission id="emission-wc3"></event-emission>
 
 </body>
 <script type="application/javascript" src="./event-emission.js"></script>
@@ -38,6 +42,14 @@
   const replaceSecond  = () => {
     const contentElement = document.getElementById("emission-wc2");
     contentElement.innerHTML = '<h2 slot="headline">Let\'s change the headline as well</h2><p slot="content">Lorem ipsum mes indicatis substantiative</p>'
+  }
+
+  const switchContent = () => {
+    document.getElementById('emission-wc3').innerHTML = '<div slot="content"><strong>It Worked!!!</strong></div>'
+  }
+
+  window.onload = () => {
+    document.getElementById('emission-wc3').innerHTML = '<div slot="content"><h2>Headline here</h2><button onclick="switchContent()">Replace me</button></div>';
   }
 </script>
 </html>
