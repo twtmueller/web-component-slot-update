@@ -20,7 +20,6 @@ const switchContent = () => {
 const generateNodeWithNumber = randomNumber => {
   const counterNode = document.createElement('p');
   counterNode.innerText = randomNumber;
-  console.log('cC', counterNode);
   return counterNode;
 }
 
