@@ -8,10 +8,10 @@
 <h2>Replacing slot content</h2>
 
 <h3>With original as markup inside WebComponent tags</h3>
-<event-emission>
+<event-emission id="trial-1">
   <section slot="content" id="emission-wc">
     <p>This comes from the inside, yeah!</p>
-    <button onclick="replaceContent()">Replace this content from the outside!</button>
+    <button data-action="tpl:replaceFirst">Replace this content from the outside!</button>
   </section>
 </event-emission>
 

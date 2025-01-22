@@ -1,7 +1,12 @@
-const replaceContent = () => {
-  const contentElement = document.getElementById("emission-wc");
-  contentElement.innerHTML = `<p>Changed the content now to something else without a button</p>`;
-}
+document.getElementById("trial-1")
+  .addEventListener('tpl:replaceFirst', e => {
+    console.log('change slot event received', e, this);
+    const contentElement = e.target;
+    const moreHistory = document.createElement('div');
+    moreHistory.setAttribute('slot', 'content')
+    moreHistory.innerHTML = `<p>Changed the content now to something else without a button</p>`;
+    contentElement.appendChild(moreHistory);
+  });
 
 const populateSecond  = () => {
   const contentElement = document.getElementById("emission-wc2");
