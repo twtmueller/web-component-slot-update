@@ -4,6 +4,7 @@ class EventEmission extends HTMLElement {
 
   shadowRoot;
   contentSlot;
+  contentChangeDetectionDisabled = false;
 
   constructor() {
     super();
@@ -11,9 +12,11 @@ class EventEmission extends HTMLElement {
   }
 
   connectedCallback() {
+    console.log('ID', this.id);
     this.shadowRoot.appendChild(this.renderWidget());
     this.setupSlotUpdateListener();
     this.addMarkupToHistory(new Event('initialLoad'));
+    this.setupSlotObserver();
   }
 
   addMarkupToHistory(e) {
@@ -28,8 +31,6 @@ class EventEmission extends HTMLElement {
 
   setupSlotUpdateListener() {
     this.contentSlot = this.shadowRoot.querySelectorAll('slot').item(1)
-    console.log('SLOT', this.contentSlot);
-
     this.contentSlot.addEventListener('slotchange', this.addMarkupToHistory);
   }
 
@@ -49,8 +50,6 @@ class EventEmission extends HTMLElement {
         this.emitEventOfType('innerClick', {count: Math.trunc(Math.random() * 1000)});
         break;
 
-      case 'tpl:replaceFirst':
-
       default:
         if (requestedAction) this.emitEventOfType(requestedAction, event);
     }
@@ -65,6 +64,54 @@ class EventEmission extends HTMLElement {
     console.log('Event triggered', type, this);
     return this.dispatchEvent(event);
   }
+
+  setupSlotObserver() {
+    console.log('Slot Observer', this);
+    // const slotTarget = this.shadowRoot.querySelector('slot[name=content]').parentNode;
+    // console.log('slotTarget', slotTarget);
+    // if (slotTarget) {
+    const mutationConfig = { attributes: true, childList: true, subtree: true };
+    this.slotObserver = new MutationObserver(this.onWebComponentContentChange);
+    this.slotObserver.observe(this, mutationConfig);
+    // }
+  }
+  
+  onWebComponentContentChange = mutationRecord => {
+    if (!this.contentChangeDetectionDisabled) {
+      const newContentRootNode = mutationRecord[0].addedNodes[0];
+      console.log('NEW Content', newContentRootNode);
+      this.clearAllSlotAttributes();
+      this.populateSlotWith(newContentRootNode);
+      this.addMarkupToHistory();
+      this.markCurrentElementInSlotAs()
+    }
+  }
+
+  markCurrentElementInSlotAs(slotNumber) {
+    const allElements = this.querySelectorAll(`#${this.id} > * `);
+    this.clearAllSlotAttributes(allElements);
+    if (!slotNumber) slotNumber = allElements.length - 1;
+    allElements.item(slotNumber).setAttribute('slot', 'content');
+  }
+
+  clearAllSlotAttributes(allElements) {
+    if (!allElements) allElements = this.querySelectorAll(`#${this.id} > * `);
+    allElements.forEach(node => node.removeAttribute('slot'));
+    console.log('ALL ELEMENTS', allElements);
+  }
+
+  populateSlotWith(html) {
+    this.contentChangeDetectionDisabled = true;
+    const componentHistoryNodes = document.querySelectorAll(`#${this.id} > *`);
+    const webComponentRootNode = document.getElementById(this.id);
+    console.log('HISTORY NODES', componentHistoryNodes);
+    const nodeToShow = componentHistoryNodes[componentHistoryNodes.length - 1];
+    nodeToShow.setAttribute('slot', 'content');
+    console.log('NODE TO SHOW', nodeToShow);
+    webComponentRootNode.appendChild(html);
+    this.contentChangeDetectionDisabled = false;
+  }
+
 
   backButton = '<button>Back</button>';
   template = '<div style="background:#eee;width:20em;border:1px solid #333;border-radius:4px">'+this.backButton+'<h4><slot name="headline">Here is my element</slot></h4><div style="width:200px;height:200px;border:1px solid #333;background:#ab2"><slot name="content"></slot></div><button data-action="do-something">Outside slot</button><footer>Here is some footer</footer></div>'
