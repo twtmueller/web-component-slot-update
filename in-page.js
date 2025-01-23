@@ -1,10 +1,8 @@
 document.getElementById("trial-1")
   .addEventListener('tpl:replaceFirst', e => {
-    console.log('change slot event received', e, this);
-    const contentElement = e.target;
     const newContent = document.createElement('div');
     newContent.innerHTML = `<p>Changed the content now to something else without a button</p>`;
-    contentElement.appendChild(newContent);
+    e.target.appendChild(newContent);
   });
 
 const populateSecond  = () => {
@@ -28,12 +26,21 @@ const generateNodeWithNumber = randomNumber => {
   return counterNode;
 }
 
-document.getElementById('emission-wc3').addEventListener('event-emitter:innerClick', e => {
-  const currentContentNode = document.getElementById('emission-wc3').firstChild;
-  const newNode = generateNodeWithNumber(e.detail.count);
-  currentContentNode.appendChild(newNode);
-});
+document.getElementById("trial-1")
+  .addEventListener('tpl:replaceFirst', e => {
+    const newContent = document.createElement('div');
+    newContent.innerHTML = `<p>Changed the content now to something else without a button</p>`;
+    e.target.appendChild(newContent);
+  });
+
+
+
+document.getElementById('trial-3')
+  .addEventListener('third:replace-me', e => {
+    const newNode = generateNodeWithNumber(e.detail.count);
+    e.target.appendChild(newNode);
+  });
 
 window.onload = () => {
-  document.getElementById('emission-wc3').innerHTML = '<div slot="content"><h2>Headline here</h2><button onclick="switchContent()">Replace me</button></div>';
+  document.getElementById('trial-3').innerHTML = '<div slot="content"><h2>Headline here</h2><button data-action="third:replace-me">Replace me</button></div>';
 }
