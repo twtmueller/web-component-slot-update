@@ -4,7 +4,6 @@ class EventEmission extends HTMLElement {
 
   shadowRoot;
   contentSlot;
-  contentChangeDetectionDisabled = false;
 
   constructor() {
     super();
@@ -39,7 +38,7 @@ class EventEmission extends HTMLElement {
   }
 
   setupSlotObserver() {
-    const mutationConfig = { attributes: true, childList: true, subtree: true };
+    const mutationConfig = { attributes: false, childList: true, subtree: true };
     this.slotObserver = new MutationObserver(this.markCurrentElementInSlotAs.bind(this));
     this.slotObserver.observe(this, mutationConfig);
   }
@@ -49,9 +48,6 @@ class EventEmission extends HTMLElement {
     const requestedAction = clickEvent.target.getAttribute('data-action') || false;
 
     switch (requestedAction) {
-      case 'do-something':
-        this.emitEventOfType('innerClick', {count: Math.trunc(Math.random() * 1000)});
-        break;
 
       case 'internal:history-back-one':
         this.goBackInHistory(-1);
@@ -86,27 +82,12 @@ class EventEmission extends HTMLElement {
     }
   }
 
-  addNewContentToSlot = mutationRecord => {
-    if (!this.contentChangeDetectionDisabled) {
-      const newContentRootNode = mutationRecord[0].addedNodes[0];
-      this.clearAllSlotAttributes();
-      // this.populateSlotWith(newContentRootNode);
-      // this.addMarkupToHistory();
-      this.markCurrentElementInSlotAs()
-    }
-  }
-
   markCurrentElementInSlotAs(slotNumber) {
-    if (!this.contentChangeDetectionDisabled) {
-      this.clearAllSlotAttributes()
-      this.contentChangeDetectionDisabled = true;
-      const allElements = this.getAllSlottableNodes();
-      this.clearAllSlotAttributes(allElements);
-      const currentSlot = (typeof slotNumber == 'number') ? slotNumber : allElements.length - 1;
-      allElements.item(currentSlot).setAttribute('slot', 'content');
-    } else {
-      this.contentChangeDetectionDisabled = false;
-    }
+    this.clearAllSlotAttributes()
+    const allElements = this.getAllSlottableNodes();
+    this.clearAllSlotAttributes(allElements);
+    const currentSlot = (typeof slotNumber == 'number') ? slotNumber : allElements.length - 1;
+    allElements.item(currentSlot).setAttribute('slot', 'content');
   }
 
   clearAllSlotAttributes(allElements) {
@@ -116,16 +97,6 @@ class EventEmission extends HTMLElement {
 
   getAllSlottableNodes = () =>
     this.querySelectorAll(`#${this.id} > * `);
-
-  populateSlotWith(html) {
-    this.contentChangeDetectionDisabled = true;
-    const componentHistoryNodes = this.getAllSlottableNodes();
-    const webComponentRootNode = document.getElementById(this.id);
-    const nodeToShow = componentHistoryNodes[componentHistoryNodes.length - 1];
-    nodeToShow.setAttribute('slot', 'content');
-    webComponentRootNode.appendChild(html);
-    this.contentChangeDetectionDisabled = false;
-  }
 
 
   backButton = '<button data-action="internal:history-back-one">Back</button>';
